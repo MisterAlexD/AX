@@ -56,9 +56,6 @@
     <Compile Include="CustomRenderOverlayControl.cs" />
     <Compile Include="CustomRenderOverlayElement.cs" />
     <Compile Include="Controls\OutlineBorder.cs" />
-    <Compile Include="Diagrams\DiagramView.cs" />
-    <Compile Include="Diagrams\DiagramViewItem.cs" />
-    <Compile Include="Diagrams\IDiagramItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -90,11 +87,5 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <Page Include="Themes\Generic.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

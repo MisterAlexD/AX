@@ -98,22 +98,22 @@ namespace AX.MVVM
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, list, index));
         }
 
-        public void RemoveRange(IEnumerable<T> collection)
-        {
-            if (collection == null)
-                throw new ArgumentNullException(nameof(collection));
+        //public void RemoveRange(IEnumerable<T> collection)
+        //{
+        //    if (collection == null)
+        //        throw new ArgumentNullException(nameof(collection));
 
-            suppressNotifications = true;
+        //    suppressNotifications = true;
 
-            foreach (T item in collection)
-            {
-                Remove(item);
-            }
+        //    foreach (T item in collection)
+        //    {
+        //        Remove(item);
+        //    }
 
-            suppressNotifications = false;
-            var list = new List<T>(collection);
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, list));
-        }
+        //    suppressNotifications = false;
+        //    var list = new List<T>(collection);
+        //    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, list));
+        //}
 
         public void ReplaceWhole(IEnumerable<T> collection)
         {

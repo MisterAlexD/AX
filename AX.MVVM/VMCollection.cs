@@ -115,7 +115,7 @@ namespace AX.MVVM
                 {
                     var removePositions = e.OldItems.Cast<ModelType>().Select(m => modelsCollection.IndexOf(m));
                     var viewModelsToRemove = removePositions.Select(index => this[index]).ToList();
-                    this.RemoveRange(viewModelsToRemove);
+                    viewModelsToRemove.ForEach(item => this.Remove(item));
                 }
                 else if (e.Action == NotifyCollectionChangedAction.Replace)
                 {

@@ -9,7 +9,7 @@ using System.Windows.Data;
 
 namespace AX.WPF
 {
-    public sealed class PropertyChangeNotifier :DependencyObject, IDisposable
+    public sealed class PropertyChangeNotifier : DependencyObject, IDisposable
     {
         #region Member Variables
         private WeakReference _propertySource;
