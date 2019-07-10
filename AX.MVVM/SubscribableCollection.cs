@@ -62,7 +62,7 @@ namespace AX.MVVM
             base.ClearItems();
             suppressNotifications = false;
 
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, list));
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, list, 0));
         }
 
         public void AddRange(IEnumerable<T> collection)
@@ -97,23 +97,6 @@ namespace AX.MVVM
             var list = new List<T>(collection);
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, list, index));
         }
-
-        //public void RemoveRange(IEnumerable<T> collection)
-        //{
-        //    if (collection == null)
-        //        throw new ArgumentNullException(nameof(collection));
-
-        //    suppressNotifications = true;
-
-        //    foreach (T item in collection)
-        //    {
-        //        Remove(item);
-        //    }
-
-        //    suppressNotifications = false;
-        //    var list = new List<T>(collection);
-        //    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, list));
-        //}
 
         public void ReplaceWhole(IEnumerable<T> collection)
         {
