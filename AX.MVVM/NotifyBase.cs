@@ -185,7 +185,6 @@ namespace AX.MVVM
                 return true;
             }
         }
-       
 
         protected virtual bool RefillCollection<T>(ref SubscribableCollection<T> storage, IEnumerable<T> value, [CallerMemberName] string propertyName = "")
         {

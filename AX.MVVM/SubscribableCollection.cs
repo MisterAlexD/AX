@@ -12,7 +12,7 @@ namespace AX.MVVM
     /// This collection never calls reset. So you can safely subscribe and unsubscribe to its items
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class SubscribableCollection<T> : ObservableCollection<T>, IList<T>, IReadOnlyObservableEnumerable<T>, IReadOnlyObservableCollection<T>
+    public class SubscribableCollection<T> : ObservableCollection<T>, IList<T>, IObservableEnumerable<T>, IReadOnlyObservableCollection<T>
     {
         private bool suppressNotifications = false;
 
@@ -62,7 +62,7 @@ namespace AX.MVVM
             base.ClearItems();
             suppressNotifications = false;
 
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, list, 0));
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, list));
         }
 
         public void AddRange(IEnumerable<T> collection)
@@ -96,6 +96,23 @@ namespace AX.MVVM
             suppressNotifications = false;
             var list = new List<T>(collection);
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, list, index));
+        }
+
+        public void RemoveRange(IEnumerable<T> collection)
+        {
+            if (collection == null)
+                throw new ArgumentNullException(nameof(collection));
+
+            suppressNotifications = true;
+
+            foreach (T item in collection)
+            {
+                Remove(item);
+            }
+
+            suppressNotifications = false;
+            var list = new List<T>(collection);
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, list));
         }
 
         public void ReplaceWhole(IEnumerable<T> collection)

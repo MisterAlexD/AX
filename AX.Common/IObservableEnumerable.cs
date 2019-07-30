@@ -4,9 +4,10 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Text;
 
-namespace AX.MVVM
+namespace AX.Common
 {
-    public interface IReadOnlyObservableEnumerable<out T> : IEnumerable<T>, INotifyPropertyChanged, INotifyCollectionChanged
+    public interface IObservableEnumerable<out T> : IEnumerable<T>, INotifyPropertyChanged, INotifyCollectionChanged
     {
+
     }
 }

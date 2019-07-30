@@ -8,7 +8,8 @@ namespace AX.Common
     public static class Extensions
     {
         /// <summary>
-        /// Iterates through collection items invoking action(item)
+        /// Iterates through enumerable items invoking action(item)
+        /// Be wary that enumarable should not change in process
         /// Returns SAME IEnumerable
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -20,10 +21,11 @@ namespace AX.Common
             foreach (var item in source)
                 action(item);
             return source;
+            
         }
 
         /// <summary>
-        /// Iterates through collection items removing all that matches predicate
+        /// Removes all items that matches predicate
         /// Returns SAME ICollection
         /// </summary>
         /// <typeparam name="T"></typeparam>

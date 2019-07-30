@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AX.MVVM
 {
-    public interface IViewModel<out T>
+    public interface IViewModel<out T> : INotifyPropertyChanged, INotifyPropertyChanging
     {
         T Model { get; }
     }

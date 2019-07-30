@@ -14,7 +14,7 @@ namespace AX.MVVM
         public T Model
         {
             get { return model; }
-            internal set { SetAndSubscribe(ref model, value); }
+            protected set { SetAndSubscribe(ref model, value); }
         }
     
         public ViewModelBase(T model)

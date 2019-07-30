@@ -9,8 +9,13 @@ namespace AX.MVVM
     public partial class ViewModelBase<T> : NotifyBase, IViewModel<T>
         where T : INotifyPropertyChanged
     {
-        protected abstract class VMReadOnlyProperty<ModelType, ViewModelType, PropType> : NotifyBase
-            where ViewModelType : ViewModelBase<ModelType>
+        public interface IVMReadOnlyProperty<PropType>
+        {
+            PropType Value { get; }
+        }
+
+        public class VMReadOnlyProperty<ModelType, ViewModelType, PropType> : NotifyBase, IVMReadOnlyProperty<PropType>
+            where ViewModelType : NotifyBase, IViewModel<ModelType>
             where ModelType : INotifyPropertyChanged
         {
             private Func<ModelType, PropType> Getter;
@@ -41,10 +46,10 @@ namespace AX.MVVM
 
             private List<string> dependencies;
 
-            internal VMReadOnlyProperty(string propName, ViewModelType vm, Func<ModelType, PropType> getFunc, params string[] dependencies)
+            public VMReadOnlyProperty(string propName, ViewModelType vm, Func<ModelType, PropType> getFunc, params string[] dependencies)
             {
                 this.dependencies = new List<string>();
-                    
+
                 this.propName = propName;
                 viewModel = vm;
                 viewModel.PropertyChanging += ViewModel_PropertyChanging;
@@ -83,16 +88,14 @@ namespace AX.MVVM
             }
         }
 
-        protected class VMReadOnlyProperty<PropType> : VMReadOnlyProperty<T, ViewModelBase<T>, PropType>
+        public interface IVMProperty<PropType> : IVMReadOnlyProperty<PropType>
         {
-            public VMReadOnlyProperty(string propName, ViewModelBase<T> vm, Func<T, PropType> getFunc, params string[] dependencies) :
-                base(propName, vm, getFunc, dependencies)
-            {
-            }
+            new PropType Value { get; set; }
+            void SubscribeTo(params string[] dependencies);
         }
 
-        protected abstract class VMProperty<ModelType, ViewModelType, PropType> : VMReadOnlyProperty<ModelType, ViewModelType, PropType>
-            where ViewModelType : ViewModelBase<ModelType>
+        public class VMProperty<ModelType, ViewModelType, PropType> : VMReadOnlyProperty<ModelType, ViewModelType, PropType>, IVMProperty<PropType>
+            where ViewModelType : NotifyBase, IViewModel<ModelType>
             where ModelType : INotifyPropertyChanged
         {
             private Action<ModelType, PropType> Setter;
@@ -102,25 +105,35 @@ namespace AX.MVVM
                 get { return base.Value; }
                 set
                 {
-                    Setter(viewModel.model, value);
+                    Setter(viewModel.Model, value);
                 }
             }
 
-            internal VMProperty(string propName, ViewModelType vm, Func<ModelType, PropType> getFunc, Action<ModelType, PropType> setAction, params string[] dependencies)
+            public VMProperty(string propName, ViewModelType vm, Func<ModelType, PropType> getFunc, Action<ModelType, PropType> setAction, params string[] dependencies)
                 : base(propName, vm, getFunc, dependencies)
             {
                 Setter = setAction;
             }
-
-
         }
 
-        protected class VMProperty<PropType> : VMProperty<T, ViewModelBase<T>, PropType>
+        public class VMReadOnlyProperty<PropType> : VMReadOnlyProperty<T, ViewModelBase<T>, PropType>
+        {
+            public VMReadOnlyProperty(string propName, ViewModelBase<T> vm, Func<T, PropType> getFunc, params string[] dependencies) :
+                base(propName, vm, getFunc, dependencies)
+            {
+            }
+        }
+
+        public class VMProperty<PropType> : VMProperty<T, ViewModelBase<T>, PropType>
         {
             public VMProperty(string propName, ViewModelBase<T> vm, Func<T, PropType> getFunc, Action<T, PropType> setAction, params string[] dependencies)
                 : base(propName, vm, getFunc, setAction, dependencies)
             {
             }
         }
+
     }
+    
+
+
 }
