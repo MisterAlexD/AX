@@ -48,6 +48,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters\MultiplyDoublesConverter.cs" />
     <Compile Include="Converters\SumToDoubleConverter.cs" />
     <Compile Include="Converters\TypeSafeConverter.cs" />
     <Compile Include="CustomRenderControl.cs" />
