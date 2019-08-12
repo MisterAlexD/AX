@@ -18,7 +18,7 @@ namespace AX.WPF.Converters
             if (CanConvert)
                 return Convert((SourceType)value, (ParameterType)parameter, culture);
             else
-                return new NotSupportedException($"Converter '{this.GetType().Name}' cannot convert.");
+                return null;
         }
 
         public abstract TargetType Convert(SourceType value, ParameterType parameter, CultureInfo culture);
@@ -28,7 +28,7 @@ namespace AX.WPF.Converters
             if (CanConvertBack)
                 return ConvertBack((TargetType)value, (ParameterType)parameter, culture);
             else
-                return new NotSupportedException($"Converter '{this.GetType().Name}' cannot convert back.");
+                return null;
         }
 
         public abstract SourceType ConvertBack(TargetType value, ParameterType parameter, CultureInfo culture);

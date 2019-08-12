@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
-namespace AX.WPF.Extensions
+namespace AX.WPF
 {
     /// <summary>
     /// Direct copy of Windows Community Toolkit
@@ -138,8 +138,8 @@ namespace AX.WPF.Extensions
         /// <typeparam name="T">Type to search for.</typeparam>
         /// <param name="element">Child element.</param>
         /// <returns>Ascendant control or null if not found.</returns>
-        public static T FindAscendant<T>(this DependencyObject element)
-            where T : DependencyObject
+        public static T FindAscendant<T>(this DependencyObject element)            
+            where T:class
         {
             var parent = VisualTreeHelper.GetParent(element);
 

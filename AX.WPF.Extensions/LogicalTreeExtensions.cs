@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
 
-namespace AX.WPF.Extensions
+namespace AX.WPF
 {
     /// <summary>
     /// Direct copy of Windows Community Toolkit 

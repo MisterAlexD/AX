@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace AX.WPF.Extensions
+namespace AX.WPF
 {
     public static class RectExtensions
     {

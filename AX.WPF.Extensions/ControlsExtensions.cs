@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
-namespace AX.WPF.Extensions
+namespace AX.WPF
 {
     public static class ControlsExtensions
     {

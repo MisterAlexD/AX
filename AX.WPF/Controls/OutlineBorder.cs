@@ -1,5 +1,4 @@
-﻿using AX.WPF.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
