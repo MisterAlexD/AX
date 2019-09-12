@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AX.Common;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,6 +12,7 @@ namespace AX.MVVM
 {   
     
     public class VMReadOnlyCollection<ViewModelType, ModelType> : IReadOnlyList<ViewModelType>, INotifyCollectionChanged
+        where ViewModelType : IViewModel<ModelType>
     {
         private IEnumerable<ModelType> modelsCollection;
 
@@ -77,13 +79,8 @@ namespace AX.MVVM
             }
             else if (e.Action == NotifyCollectionChangedAction.Remove)
             {
-                //there is no way to know wheter item were sequantial or not
-                //So we actually reseting collecion
-                internalList.Clear();
-                foreach (var model in modelsCollection)
-                {
-                    internalList.Add(VMFabric(model));
-                }
+                var removedArray = e.OldItems.Cast<ModelType>().ToArray();
+                internalList.RemoveAll(x => removedArray.Contains(x.Model));
             }
             else if (e.Action == NotifyCollectionChangedAction.Replace)
             {

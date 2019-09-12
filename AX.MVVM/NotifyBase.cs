@@ -63,6 +63,22 @@ namespace AX.MVVM
             }
         }
 
+        internal void SubscribeCachedReadOnlyProperty(ICachedReadOnlyProperty cachedProperty)
+        {
+            void cachedProperty_PropertyChanging(object sender, PropertyChangingEventArgs e)
+            {
+                OnPropertyChanging(cachedProperty.PropertyName);
+            }
+            cachedProperty.PropertyChanging += cachedProperty_PropertyChanging;
+
+            void cachedProperty_PropertyChanged(object sender, PropertyChangedEventArgs e)
+            {
+                OnPropertyChanged(cachedProperty.PropertyName);
+            }
+            cachedProperty.PropertyChanged += cachedProperty_PropertyChanged;
+        }
+
+
         private List<string> _allreadyCalled = new List<string>();
         private int _recursionCounter = 0;
         private void ViewModelBase_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -85,19 +101,9 @@ namespace AX.MVVM
                 _allreadyCalled.Clear();
         }
 
-        internal void CallPropertyChanged(string propertyName)
-        {
-            OnPropertyChanged(propertyName);
-        }
-
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        internal void CallPropertyChanging(string propertyName)
-        {
-            OnPropertyChanging(propertyName);
         }
 
         protected virtual void OnPropertyChanging([CallerMemberName]string propertyName = null)
@@ -147,7 +153,7 @@ namespace AX.MVVM
 
             if (storage != null)
             {
-                value.PropertyChanged -= handler;                
+                value.PropertyChanged -= handler;
             }
             OnPropertyChanging(propertyName);
             storage = value;

@@ -14,8 +14,6 @@ namespace AX.MVVM
     /// <typeparam name="T"></typeparam>
     public class SubscribableCollection<T> : ObservableCollection<T>, IList<T>, IObservableEnumerable<T>, IReadOnlyObservableCollection<T>
     {
-        private bool suppressNotifications = false;
-
         private Action<T> OnItemAdd = null;
         private Action<T> OnItemRemove = null;
 
@@ -43,43 +41,25 @@ namespace AX.MVVM
             }
             else if (e.Action == NotifyCollectionChangedAction.Replace)
             {
-                OnItemRemove((T)e.OldItems[0]);
-                OnItemAdd((T)e.NewItems[0]);
+                OnItemRemove?.Invoke((T)e.OldItems[0]);
+                OnItemAdd?.Invoke((T)e.NewItems[0]);
             }
-        }
-
-        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-        {
-            if (!suppressNotifications)
-                base.OnCollectionChanged(e);
         }
 
         protected override void ClearItems()
         {
             var list = new List<T>(this);
-
-            suppressNotifications = true;
-            base.ClearItems();
-            suppressNotifications = false;
-
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, list));
+            RemoveRange(list);
         }
 
         public void AddRange(IEnumerable<T> collection)
         {
             if (collection == null)
                 throw new ArgumentNullException(nameof(collection));
-            var index = this.Count - 1;
-            suppressNotifications = true;
-
-            foreach (T item in collection)
+            foreach(var item in collection)
             {
                 Add(item);
             }
-            suppressNotifications = false;
-
-            var list = new List<T>(collection);
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, list));
         }
 
         public void InsertRange(int index, IEnumerable<T> collection)
@@ -87,15 +67,10 @@ namespace AX.MVVM
             if (collection == null)
                 throw new ArgumentNullException(nameof(collection));
 
-            suppressNotifications = true;
-
-            foreach (T item in collection)
+            foreach (T item in collection.ToArray().Reverse<T>())
             {
                 Insert(index, item);
             }
-            suppressNotifications = false;
-            var list = new List<T>(collection);
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, list, index));
         }
 
         public void RemoveRange(IEnumerable<T> collection)
@@ -103,16 +78,11 @@ namespace AX.MVVM
             if (collection == null)
                 throw new ArgumentNullException(nameof(collection));
 
-            suppressNotifications = true;
-
-            foreach (T item in collection)
+            foreach (T item in collection.ToArray())
             {
                 Remove(item);
             }
 
-            suppressNotifications = false;
-            var list = new List<T>(collection);
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, list));
         }
 
         public void ReplaceWhole(IEnumerable<T> collection)

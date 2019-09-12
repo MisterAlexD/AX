@@ -6,39 +6,37 @@ using System.Linq;
 
 namespace AX.MVVM
 {
-    public class CachedProperty<PropertyType, LinkedObjectType>
-        where LinkedObjectType : NotifyBase
+    public class CachedReadOnlyProperty<PropertyType, LinkedObjectType> : NotifyBase, ICachedReadOnlyProperty
     {
         private List<string> dependenceNames = new List<string>();
-
-        private PropertyType value = default(PropertyType);
-        private bool needToUpdate = true;
 
         private LinkedObjectType linkedObject = default(LinkedObjectType);
 
         public string PropertyName { get; private set; }
 
+        private PropertyType value = default(PropertyType);
+
         public PropertyType Value
         {
-            get
-            {
-                if (needToUpdate)
-                {
-                    value = UpdateFunction(linkedObject);
-                    needToUpdate = false;
-                }
-                return value;
-            }
+            get { return value; }
+            protected set { Set(ref value, value); }
         }
 
         private Func<LinkedObjectType, PropertyType> UpdateFunction;
 
-        public CachedProperty(string propertyName, Func<LinkedObjectType, PropertyType> updateFunction, LinkedObjectType linkedObject)
+        public CachedReadOnlyProperty(string propertyName, LinkedObjectType linkedObject, Func<LinkedObjectType, PropertyType> updateFunction)
         {
             this.PropertyName = propertyName;
             this.UpdateFunction = updateFunction;
             this.linkedObject = linkedObject;
-            this.linkedObject.PropertyChanged += LinkedObject_PropertyChanged;
+            if (linkedObject is INotifyPropertyChanged notifyPropertyChanged)
+            {
+                notifyPropertyChanged.PropertyChanged += LinkedObject_PropertyChanged;
+            }
+            if (linkedObject is NotifyBase notifyBase)
+            {
+                notifyBase.SubscribeCachedReadOnlyProperty(this);
+            }
         }
 
         private void LinkedObject_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -69,16 +67,19 @@ namespace AX.MVVM
 
         public void UpdateValue()
         {
-            needToUpdate = true;
-            linkedObject.CallPropertyChanged(PropertyName);
+            var oldValue = value;
+            var newValue = UpdateFunction(linkedObject);
+            Value = newValue;
         }
-
     }
-
-    public class CachedProperty<PropertyType> : CachedProperty<PropertyType, NotifyBase>
+    
+    public static class CachedReadOnlyProperty
     {
-        public CachedProperty(string propertyName, Func<NotifyBase, PropertyType> updateFunction, NotifyBase linkedObject) :
-            base(propertyName, updateFunction, linkedObject)
-        { }
+        public static CachedReadOnlyProperty<PropType, ObjType> Create<PropType, ObjType>(string propertyName, ObjType linkedObject, Func<ObjType, PropType> updateFunction)
+        {
+            return new CachedReadOnlyProperty<PropType, ObjType>(propertyName, linkedObject, updateFunction);
+        }
     }
+
+
 }

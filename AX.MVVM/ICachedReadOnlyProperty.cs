@@ -5,9 +5,8 @@ using System.Text;
 
 namespace AX.MVVM
 {
-    public partial class ViewModelBase<T> : NotifyBase, IViewModel<T>
-        where T : INotifyPropertyChanged
+    public interface ICachedReadOnlyProperty : INotifyPropertyChanged, INotifyPropertyChanging
     {
-
+        string PropertyName { get; }
     }
 }
