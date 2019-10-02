@@ -4,6 +4,8 @@
     <TargetFrameworks>netstandard1.3;net46</TargetFrameworks>
     <AssemblyName>AX.Common</AssemblyName>
     <RootNamespace>AX.Common</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.1.0</Version>
   </PropertyGroup>
 
 </Project>

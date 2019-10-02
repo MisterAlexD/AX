@@ -6,15 +6,11 @@ using System.Linq;
 
 namespace AX.MVVM
 {
-    public class CachedReadOnlyProperty<PropertyType, LinkedObjectType> : NotifyBase, ICachedReadOnlyProperty
+    public class CachedReadOnlyProperty<PropertyType> : NotifyBase, ICachedReadOnlyProperty<PropertyType>
     {
-        private List<string> dependenceNames = new List<string>();
+        public List<string> Dependencies { get; private set; }
 
-        private LinkedObjectType linkedObject = default(LinkedObjectType);
-
-        public string PropertyName { get; private set; }
-
-        private PropertyType value = default(PropertyType);
+        private PropertyType value = default;
 
         public PropertyType Value
         {
@@ -22,62 +18,56 @@ namespace AX.MVVM
             protected set { Set(ref value, value); }
         }
 
-        private Func<LinkedObjectType, PropertyType> UpdateFunction;
+        private Func<PropertyType> GetFunc;
 
-        public CachedReadOnlyProperty(string propertyName, LinkedObjectType linkedObject, Func<LinkedObjectType, PropertyType> updateFunction)
+        public CachedReadOnlyProperty(Func<PropertyType> getFunction, INotifyPropertyChanged notifyObj = null, IEnumerable<string> dependenceProperties = null)
         {
-            this.PropertyName = propertyName;
-            this.UpdateFunction = updateFunction;
-            this.linkedObject = linkedObject;
-            if (linkedObject is INotifyPropertyChanged notifyPropertyChanged)
+            Dependencies = new List<string>(5);
+                
+            this.GetFunc = getFunction;
+            if (notifyObj != null)
             {
-                notifyPropertyChanged.PropertyChanged += LinkedObject_PropertyChanged;
-            }
-            if (linkedObject is NotifyBase notifyBase)
-            {
-                notifyBase.SubscribeCachedReadOnlyProperty(this);
+                notifyObj.PropertyChanged += NotifyObject_PropertyChanged;
             }
         }
 
-        private void LinkedObject_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void NotifyObject_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.IsAny(dependenceNames))
+            if (e.IsAny(Dependencies))
             {
                 UpdateValue();
             }
         }
 
-        public void SubsribeTo(params string[] propertyNames)
+        public void AddDependencies(params string[] propertyNames)
         {
             foreach (var propName in propertyNames)
             {
-                if (!dependenceNames.Contains(propName))
-                    dependenceNames.Add(propName);
+                if (!Dependencies.Contains(propName))
+                    Dependencies.Add(propName);
             }
         }
 
-        public void SubsribeTo(IEnumerable<string> propertyNames)
+        public void AddDependencies(IEnumerable<string> propertyNames)
         {
             foreach (var propName in propertyNames)
             {
-                if (!dependenceNames.Contains(propName))
-                    dependenceNames.Add(propName);
+                if (!Dependencies.Contains(propName))
+                    Dependencies.Add(propName);
             }
         }
 
         public void UpdateValue()
         {
-            var oldValue = value;
-            var newValue = UpdateFunction(linkedObject);
-            Value = newValue;
+            Value = GetFunc();
         }
     }
     
     public static class CachedReadOnlyProperty
     {
-        public static CachedReadOnlyProperty<PropType, ObjType> Create<PropType, ObjType>(string propertyName, ObjType linkedObject, Func<ObjType, PropType> updateFunction)
+        public static CachedReadOnlyProperty<PropType> Create<PropType>(Func<PropType> updateFunction, INotifyPropertyChanged notifyObj = null, IEnumerable<string> dependencies = null)
         {
-            return new CachedReadOnlyProperty<PropType, ObjType>(propertyName, linkedObject, updateFunction);
+            return new CachedReadOnlyProperty<PropType>(updateFunction, notifyObj, dependencies);
         }
     }
 

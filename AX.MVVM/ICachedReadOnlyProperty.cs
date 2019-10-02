@@ -7,6 +7,15 @@ namespace AX.MVVM
 {
     public interface ICachedReadOnlyProperty : INotifyPropertyChanged, INotifyPropertyChanging
     {
-        string PropertyName { get; }
+        List<string> Dependencies { get; }
+        void UpdateValue();
+
+        void AddDependencies(params string[] dependencies);
+        void AddDependencies(IEnumerable<string> dependencies);
+    }
+
+    public interface ICachedReadOnlyProperty<T> : ICachedReadOnlyProperty
+    {
+        T Value { get; }
     }
 }

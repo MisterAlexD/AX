@@ -63,22 +63,6 @@ namespace AX.MVVM
             }
         }
 
-        internal void SubscribeCachedReadOnlyProperty(ICachedReadOnlyProperty cachedProperty)
-        {
-            void cachedProperty_PropertyChanging(object sender, PropertyChangingEventArgs e)
-            {
-                OnPropertyChanging(cachedProperty.PropertyName);
-            }
-            cachedProperty.PropertyChanging += cachedProperty_PropertyChanging;
-
-            void cachedProperty_PropertyChanged(object sender, PropertyChangedEventArgs e)
-            {
-                OnPropertyChanged(cachedProperty.PropertyName);
-            }
-            cachedProperty.PropertyChanged += cachedProperty_PropertyChanged;
-        }
-
-
         private List<string> _allreadyCalled = new List<string>();
         private int _recursionCounter = 0;
         private void ViewModelBase_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -221,6 +205,24 @@ namespace AX.MVVM
                 return true;
             }
         }
+
+        protected void SubscribeTo(ICachedReadOnlyProperty relayProperty, string propertyName)
+        {
+            void relayProperty_PropertyChanged(object sender, PropertyChangedEventArgs e)
+            {
+                OnPropertyChanged(propertyName);
+            }
+
+            void relayProperty_PropertyChanging(object sender, PropertyChangingEventArgs e)
+            {
+                OnPropertyChanging(propertyName);
+            }
+
+            relayProperty.PropertyChanging += relayProperty_PropertyChanging;
+            relayProperty.PropertyChanged += relayProperty_PropertyChanged;
+        }
+
+
 
         protected static string dotJoin(params string[] args)
         {
