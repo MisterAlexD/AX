@@ -17,7 +17,7 @@ namespace AX.WPF.Converters
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
-            throw new NotSupportedException("SumConverter does not support 'ConvertBack'");
+            return null;
         }
     }
 }
