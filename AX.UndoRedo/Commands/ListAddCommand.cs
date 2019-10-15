@@ -25,4 +25,9 @@ namespace AX.UndoRedo
             list.Remove(newItem);
         }
     }
+
+    public static class ListAddCommand
+    {
+        public static ListAddCommand<T> Create<T>(IList<T> list, T newItem) => new ListAddCommand<T>(list, newItem);
+    }
 }

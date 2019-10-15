@@ -30,4 +30,9 @@ namespace AX.UndoRedo
             list.Insert(index, item);
         }
     }
+
+    public static class ListRemoveCommand
+    {
+        public static ListRemoveCommand<T> Create<T>(IList<T> list, T item) => new ListRemoveCommand<T>(list, item);
+    }
 }
