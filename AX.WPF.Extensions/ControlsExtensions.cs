@@ -24,5 +24,12 @@ namespace AX.WPF
 
             return actualRect;
         }
+
+        public static Rect GetRelativeBounds(this Visual visual, Visual relativeVisual)
+        {
+            var bounds = VisualTreeHelper.GetDescendantBounds(visual);
+            var transform = visual.TransformToVisual(relativeVisual);
+            return transform.TransformBounds(bounds);
+        }
     }
 }

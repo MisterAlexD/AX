@@ -15,7 +15,7 @@ namespace AX.MVVM
         public PropertyType Value
         {
             get { return value; }
-            protected set { Set(ref value, value); }
+            protected set { Set(ref this.value, value); }
         }
 
         private Func<PropertyType> GetFunc;
@@ -23,7 +23,8 @@ namespace AX.MVVM
         public CachedReadOnlyProperty(Func<PropertyType> getFunction, INotifyPropertyChanged notifyObj = null, IEnumerable<string> dependenceProperties = null)
         {
             Dependencies = new List<string>(5);
-                
+            if (dependenceProperties != null) Dependencies.AddRange(dependenceProperties);
+
             this.GetFunc = getFunction;
             if (notifyObj != null)
             {
@@ -62,14 +63,17 @@ namespace AX.MVVM
             Value = GetFunc();
         }
     }
-    
+
     public static class CachedReadOnlyProperty
     {
         public static CachedReadOnlyProperty<PropType> Create<PropType>(Func<PropType> updateFunction, INotifyPropertyChanged notifyObj = null, IEnumerable<string> dependencies = null)
         {
             return new CachedReadOnlyProperty<PropType>(updateFunction, notifyObj, dependencies);
         }
+
+        public static CachedReadOnlyProperty<PropType> Create<PropType>(Func<PropType> updateFunction, INotifyPropertyChanged notifyObj = null, params string[] dependencies)
+        {
+            return new CachedReadOnlyProperty<PropType>(updateFunction, notifyObj, dependencies);
+        }
     }
-
-
 }

@@ -1,5 +1,4 @@
-﻿using AX.Common;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,7 +8,7 @@ using System.Linq;
 using System.Text;
 
 namespace AX.MVVM
-{   
+{  
     
     public class VMReadOnlyCollection<ViewModelType, ModelType> : IReadOnlyList<ViewModelType>, INotifyCollectionChanged
         where ViewModelType : IViewModel<ModelType>

@@ -11,6 +11,9 @@ namespace AX.MVVM
     {
         private T model;
 
+#if NET46 || NETFRAMEWORK
+        [Browsable(false)]
+#endif
         public T Model
         {
             get { return model; }

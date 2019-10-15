@@ -32,6 +32,11 @@ namespace AX.WPF
                         result.AddGeometry(glyphRunD.GlyphRun.BuildGeometry());
                     else
                         result.AddGeometry(new RectangleGeometry(child.Bounds));
+                }                
+                else if (child is ImageDrawing)
+                {
+                    var imageDG = child as ImageDrawing;
+                    result.AddGeometry(new RectangleGeometry(child.Bounds));
                 }
                 else
                 {

@@ -6,8 +6,6 @@ using System.Text;
 
 namespace AX.MVVM
 {
-    
-
     public class CachedRelayProperty<T> : NotifyBase, ICachedReadOnlyProperty
     {
         private Func<T> GetFunc;
@@ -21,7 +19,7 @@ namespace AX.MVVM
         public T Value
         {
             get { return value; }
-            private set { Set(ref value, value); }
+            set { SetAction(value); }
         }
 
         public CachedRelayProperty(Func<T> getFunction, Action<T> setAction, INotifyPropertyChanged notifyObj = null, IEnumerable<string> dependeceProperties = null)
@@ -41,7 +39,7 @@ namespace AX.MVVM
             {
                 Dependencies.AddRange(dependeceProperties);
             }
-            
+            UpdateValue();
         }
 
         private void NotifyObj_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -54,7 +52,8 @@ namespace AX.MVVM
 
         public void UpdateValue()
         {
-            Value = GetFunc();
+            value = GetFunc();
+            OnPropertyChanged(nameof(Value));
         }
 
         public void AddDependencies(params string[] dependencies)

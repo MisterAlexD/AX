@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +20,20 @@ namespace AX.WPF.Controls
         }
         public static readonly DependencyProperty BorderBrushProperty =
             DependencyProperty.Register(nameof(BorderBrush), typeof(Brush), typeof(OutlineBorder), new FrameworkPropertyMetadata(Brushes.Transparent)
+            {
+                AffectsRender = true
+            });
+
+
+        public Brush Fill
+        {
+            get { return (Brush)GetValue(FillProperty); }
+            set { SetValue(FillProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Fill.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty FillProperty =
+            DependencyProperty.Register(nameof(Fill), typeof(Brush), typeof(OutlineBorder), new FrameworkPropertyMetadata(Brushes.Transparent)
             {
                 AffectsRender = true
             });
@@ -51,18 +66,35 @@ namespace AX.WPF.Controls
                 AffectsRender = true
             });
 
-        private DrawingGroup drawingGroup = new DrawingGroup();
-        private PathGeometry childGeometry = new PathGeometry();
-
-        public OutlineBorder()
+        public override UIElement Child
         {
+            get => base.Child;
+            set => SetChild(value);
         }
+
+        private void SetChild(UIElement value)
+        {
+            void child_LayoutUpdated(object sender, EventArgs e)
+            {
+                this.InvalidateVisual();
+            }
+
+            if (Child != null)
+            {
+                Child.LayoutUpdated -= child_LayoutUpdated;
+            }
+            base.Child = value;
+            if (Child != null)
+            {
+                Child.LayoutUpdated += child_LayoutUpdated;
+            }
+        }
+
+        
 
         protected override Size ArrangeOverride(Size arrangeSize)
         {
-            var childSize = Child.DesiredSize;
-            var childRect = new Rect(Thickness, Thickness, childSize.Width, childSize.Height);
-            Child.Arrange(childRect);
+            Child.Arrange(new Rect(arrangeSize));
             return arrangeSize;
         }
 
@@ -73,7 +105,7 @@ namespace AX.WPF.Controls
             var childSize = Child.DesiredSize;
             childSize.Width += Thickness * 2;
             childSize.Height += Thickness * 2;
-            return childSize;
+            return constraint;
         }
 
         protected override void OnRender(DrawingContext drawingContext)
@@ -82,8 +114,7 @@ namespace AX.WPF.Controls
             var childGeometry = unioned.GetFlattenedPathGeometry();
             var toRemove = childGeometry.Figures.Take(childGeometry.Figures.Count - 1).ToList();
             toRemove.ForEach(x => childGeometry.Figures.Remove(x));
-            childGeometry.Transform = new TranslateTransform(Thickness, Thickness);
-            drawingContext.DrawGeometry(null, BorderBrush.ToPen(Thickness), childGeometry);
+            drawingContext.DrawGeometry(Fill, BorderBrush.ToPen(Thickness), childGeometry);
         }
 
 

@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
+    <Version>0.1.0</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Alexander Denshchikov</Authors>
+    <Company>Alexander Denshchikov</Company>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/MisterAlexD/AX</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/MisterAlexD/AX</RepositoryUrl>
+    <RepositoryType>GitHub</RepositoryType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AX.Common\AX.Common.csproj" />
+    <ProjectReference Include="..\AX.MVVM\AX.MVVM.csproj" />
+  </ItemGroup>
+
+</Project>

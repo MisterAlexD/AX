@@ -5,7 +5,13 @@
     <AssemblyName>AX.Common</AssemblyName>
     <RootNamespace>AX.Common</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.1.0</Version>
+    <Version>0.1.3</Version>
+    <Authors>Alexander Denshchikov</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/MisterAlexD/AX</RepositoryUrl>
+    <RepositoryType>GitHub</RepositoryType>
+    <Company>Alexander Denshchikov</Company>
+    <PackageProjectUrl>https://github.com/MisterAlexD/AX</PackageProjectUrl>
   </PropertyGroup>
 
 </Project>

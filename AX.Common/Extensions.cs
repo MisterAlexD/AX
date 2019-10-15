@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AX.Common
+namespace AX
 {
     public static class Extensions
     {
@@ -40,6 +40,16 @@ namespace AX.Common
                 collection.Remove(item);
             }
             return collection;
+        }
+
+        public static bool IsAlmostEqualsTo(this double a, double b, double epsilon = double.Epsilon)
+        {
+            return Math.Abs(b - a) < epsilon;
+        }
+
+        public static bool IsAlmostEqualsTo(this float a, float b, float epsilon = float.Epsilon)
+        {
+            return Math.Abs(b - a) < epsilon;
         }
     }
 }

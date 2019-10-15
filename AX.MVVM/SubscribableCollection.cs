@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Text;
 using System.Linq;
-using AX.Common;
 
 namespace AX.MVVM
 {

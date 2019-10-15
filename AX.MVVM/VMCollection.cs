@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
-using AX.Common;
 
 namespace AX.MVVM
 {
@@ -113,8 +112,8 @@ namespace AX.MVVM
                 }
                 else if (e.Action == NotifyCollectionChangedAction.Remove)
                 {
-                    var removePositions = e.OldItems.Cast<ModelType>().Select(m => modelsCollection.IndexOf(m));
-                    var viewModelsToRemove = removePositions.Select(index => this[index]).ToList();
+                    var removedModels = e.OldItems.Cast<ModelType>().ToArray();
+                    var viewModelsToRemove = this.Where(vm => removedModels.Contains(vm.Model)).ToArray();
                     this.RemoveRange(viewModelsToRemove);
                 }
                 else if (e.Action == NotifyCollectionChangedAction.Replace)

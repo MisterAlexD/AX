@@ -48,6 +48,12 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\AdornedControl\AdornedControl.cs" />
+    <Compile Include="Controls\AdornedControl\ImprovedAdornedControl.cs" />
+    <Compile Include="Controls\AdornedControl\AdornerPlacement.cs" />
+    <Compile Include="Controls\AdornedControl\FrameworkElementAdorner.cs" />
+    <Compile Include="Converters\ConverterResult.cs" />
+    <Compile Include="Converters\InvertDoubleConverter.cs" />
     <Compile Include="Converters\MultiplyDoublesConverter.cs" />
     <Compile Include="Converters\SumToDoubleConverter.cs" />
     <Compile Include="Converters\TypeSafeConverter.cs" />

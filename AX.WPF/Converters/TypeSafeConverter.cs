@@ -21,7 +21,7 @@ namespace AX.WPF.Converters
                 return null;
         }
 
-        public abstract TargetType Convert(SourceType value, ParameterType parameter, CultureInfo culture);
+        public abstract ConverterResult<TargetType> Convert(SourceType value, ParameterType parameter, CultureInfo culture);
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -31,7 +31,7 @@ namespace AX.WPF.Converters
                 return null;
         }
 
-        public abstract SourceType ConvertBack(TargetType value, ParameterType parameter, CultureInfo culture);
+        public abstract ConverterResult<SourceType> ConvertBack(TargetType value, ParameterType parameter, CultureInfo culture);
     }
 
     public abstract class TypeSafeConverter<SourceType, TargetType> : TypeSafeConverter<SourceType, TargetType, object>
