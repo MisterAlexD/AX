@@ -14,11 +14,17 @@ namespace AX.MVVM
         INotifyPropertyChanged notifyObj;
         public List<string> Dependencies { get; private set; }
 
+        private bool isValueSet = false;
+
         private T value;
 
         public T Value
         {
-            get { return value; }
+            get
+            {
+                if (!isValueSet) { value = GetFunc(); isValueSet = true; }
+                return value;
+            }
             set { SetAction(value); }
         }
 
@@ -39,7 +45,7 @@ namespace AX.MVVM
             {
                 Dependencies.AddRange(dependeceProperties);
             }
-            UpdateValue();
+
         }
 
         private void NotifyObj_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -48,6 +54,12 @@ namespace AX.MVVM
             {
                 UpdateValue();
             }
+        }
+
+        public void DropValue()
+        {
+            isValueSet = false;
+            OnPropertyChanged(nameof(Value));
         }
 
         public void UpdateValue()
