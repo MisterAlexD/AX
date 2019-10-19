@@ -17,7 +17,7 @@ namespace AX.MVVM
         private Action<T> OnItemRemove = null;
 
         public SubscribableCollection()
-        {
+        {            
             CollectionChanged += AxObservableCollection_CollectionChanged;
         }
 

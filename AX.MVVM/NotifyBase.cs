@@ -11,7 +11,7 @@ using System.Text;
 
 namespace AX.MVVM
 {
-    public abstract class NotifyBase : INotifyPropertyChanged, INotifyPropertyChanging
+    public abstract partial class NotifyBase : INotifyPropertyChanged, INotifyPropertyChanging
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public event PropertyChangingEventHandler PropertyChanging;
@@ -222,6 +222,20 @@ namespace AX.MVVM
             relayProperty.PropertyChanged += relayProperty_PropertyChanged;
         }
 
+        protected CachedReadOnlyProperty<T> CreateCachedReadOnlyProperty<T>(Func<T> updateFunction, string propertyName, INotifyPropertyChanged notifyObj = null, params string[] dependencies)
+        {
+            var result = CachedReadOnlyProperty.Create(updateFunction, notifyObj, dependencies);
+            SubscribeTo(result, propertyName);
+            return result;
+        }
+
+        protected CachedRelayProperty<T> CreateCachedRelayProperty<T>(Func<T> getFunc, Action<T> setAction, string propertyName,
+                                                                      INotifyPropertyChanged notifyObj, params string[] dependecies)
+        {
+            var result = CachedRelayProperty.Create(getFunc, setAction, notifyObj, dependecies);
+            SubscribeTo(result, propertyName);
+            return result;
+        }
 
 
         protected static string dotJoin(params string[] args)

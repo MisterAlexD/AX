@@ -3,14 +3,14 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3;netstandard2.0;net46</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.9.8</Version>
+    <Version>0.9.93</Version>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/MisterAlexD/AX</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MisterAlexD/AX</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
     <PackageIconUrl></PackageIconUrl>
-    <AssemblyVersion>0.9.7.0</AssemblyVersion>
+    <AssemblyVersion>0.9.9.0</AssemblyVersion>
     <LangVersion>7.1</LangVersion>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Authors>Alexander Denshchikov</Authors>
@@ -21,6 +21,14 @@
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="NotifyBase.Inner.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="NotifyBase.Inner.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\AX.Common\AX.Common.csproj" />

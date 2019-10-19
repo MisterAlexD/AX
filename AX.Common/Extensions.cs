@@ -21,7 +21,7 @@ namespace AX
             foreach (var item in source)
                 action(item);
             return source;
-            
+
         }
 
         /// <summary>
@@ -40,6 +40,17 @@ namespace AX
                 collection.Remove(item);
             }
             return collection;
+        }
+
+        public static int IndexOf<T>(this IEnumerable<T> collection, T item)
+        {
+            int index = 0;
+            foreach(var entry in collection)
+            {
+                if (EqualityComparer<T>.Default.Equals(entry, item)) return index;
+                index++;
+            }
+            return -1;
         }
 
         public static bool IsAlmostEqualsTo(this double a, double b, double epsilon = double.Epsilon)

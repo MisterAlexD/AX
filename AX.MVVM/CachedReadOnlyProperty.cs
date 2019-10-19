@@ -10,11 +10,17 @@ namespace AX.MVVM
     {
         public List<string> Dependencies { get; private set; }
 
+        private bool isValuesSet = false;
+
         private PropertyType value = default;
 
         public PropertyType Value
         {
-            get { return value; }
+            get
+            {
+                if (!isValuesSet) value = GetFunc();
+                return value;
+            }
             protected set { Set(ref this.value, value); }
         }
 
@@ -26,6 +32,7 @@ namespace AX.MVVM
             if (dependenceProperties != null) Dependencies.AddRange(dependenceProperties);
 
             this.GetFunc = getFunction;
+
             if (notifyObj != null)
             {
                 notifyObj.PropertyChanged += NotifyObject_PropertyChanged;
@@ -58,9 +65,16 @@ namespace AX.MVVM
             }
         }
 
+        public void DropValue()
+        {   
+            isValuesSet = false;
+            Value = default;
+        }
+
         public void UpdateValue()
-        {
+        {   
             Value = GetFunc();
+            isValuesSet = true;
         }
     }
 
