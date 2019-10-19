@@ -18,7 +18,7 @@ namespace AX.MVVM
         {
             get
             {
-                if (!isValuesSet) value = GetFunc();
+                if (!isValuesSet) { value = GetFunc(); isValuesSet = true; }
                 return value;
             }
             protected set { Set(ref this.value, value); }
