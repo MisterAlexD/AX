@@ -206,7 +206,7 @@ namespace AX.MVVM
             }
         }
 
-        protected void SubscribeTo(ICachedReadOnlyProperty relayProperty, string propertyName)
+        protected void SubscribeTo<PropType>(CachedRelayProperty<PropType> relayProperty, string propertyName)
         {
             void relayProperty_PropertyChanged(object sender, PropertyChangedEventArgs e)
             {
@@ -218,6 +218,24 @@ namespace AX.MVVM
                 OnPropertyChanging(propertyName);
             }
 
+            //TODO: Fix Potential Memory Leaks
+            relayProperty.PropertyChanging += relayProperty_PropertyChanging;
+            relayProperty.PropertyChanged += relayProperty_PropertyChanged;
+        }
+
+        protected void SubscribeTo<PropType>(CachedReadOnlyProperty<PropType> relayProperty, string propertyName)
+        {
+            void relayProperty_PropertyChanged(object sender, PropertyChangedEventArgs e)
+            {
+                OnPropertyChanged(propertyName);
+            }
+
+            void relayProperty_PropertyChanging(object sender, PropertyChangingEventArgs e)
+            {
+                OnPropertyChanging(propertyName);
+            }
+
+            //TODO: Fix Potential Memory Leaks
             relayProperty.PropertyChanging += relayProperty_PropertyChanging;
             relayProperty.PropertyChanged += relayProperty_PropertyChanged;
         }

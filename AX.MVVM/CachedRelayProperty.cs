@@ -64,13 +64,12 @@ namespace AX.MVVM
             isValueSet = true;
         }
 
-        public CachedReadOnlyProperty<T> AddDependencies(INotifyPropertyChanged notifiable, params string[] propertyNames)
+        public CachedRelayProperty<T> AddDependencies(INotifyPropertyChanged notifiable, params string[] propertyNames)
         {
             return AddDependencies(notifiable, (IEnumerable<string>)propertyNames);
-            
         }
 
-        public CachedReadOnlyProperty<T> AddDependencies(INotifyPropertyChanged notifiable, IEnumerable<string> propertyNames)
+        public CachedRelayProperty<T> AddDependencies(INotifyPropertyChanged notifiable, IEnumerable<string> propertyNames)
         {
             List<string> namesList = null;
             if (dependencies.ContainsKey(notifiable))
