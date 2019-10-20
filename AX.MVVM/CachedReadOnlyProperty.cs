@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace AX.MVVM
 {
-    public class CachedReadOnlyProperty<PropertyType> : NotifyBase, ICachedReadOnlyProperty<PropertyType>
+    public class CachedReadOnlyProperty<PropertyType> : NotifyBase
     {
         private Dictionary<INotifyPropertyChanged, List<string>> dependencies = new Dictionary<INotifyPropertyChanged, List<string>>();
 
@@ -35,7 +35,6 @@ namespace AX.MVVM
             }
         }
 
-
         private void NotifyObject_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             var notifyable = sender as INotifyPropertyChanged;
@@ -48,13 +47,12 @@ namespace AX.MVVM
             }
         }
 
-        public void AddDependencies(INotifyPropertyChanged notifiable, params string[] propertyNames)
+        public CachedReadOnlyProperty<PropertyType> AddDependencies(INotifyPropertyChanged notifiable, params string[] propertyNames)
         {
-            AddDependencies(notifiable, (IEnumerable<string>)propertyNames);
+            return AddDependencies(notifiable, (IEnumerable<string>)propertyNames);
         }
 
-
-        public void AddDependencies(INotifyPropertyChanged notifiable, IEnumerable<string> propertyNames)
+        public CachedReadOnlyProperty<PropertyType> AddDependencies(INotifyPropertyChanged notifiable, IEnumerable<string> propertyNames)
         {
             List<string> namesList = null;
             if (dependencies.ContainsKey(notifiable))
@@ -73,6 +71,7 @@ namespace AX.MVVM
                 if (!namesList.Contains(propName))
                     namesList.Add(propName);
             }
+            return this;
         }
 
         public void DropValue()

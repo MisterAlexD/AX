@@ -6,7 +6,7 @@ using System.Text;
 
 namespace AX.MVVM
 {
-    public class CachedRelayProperty<T> : NotifyBase, ICachedReadOnlyProperty
+    public class CachedRelayProperty<T> : NotifyBase
     {
         private Func<T> GetFunc;
         private Action<T> SetAction;
@@ -64,12 +64,13 @@ namespace AX.MVVM
             isValueSet = true;
         }
 
-        public void AddDependencies(INotifyPropertyChanged notifiable, params string[] propertyNames)
+        public CachedReadOnlyProperty<T> AddDependencies(INotifyPropertyChanged notifiable, params string[] propertyNames)
         {
-            AddDependencies(notifiable, (IEnumerable<string>)propertyNames);
+            return AddDependencies(notifiable, (IEnumerable<string>)propertyNames);
+            
         }
 
-        public void AddDependencies(INotifyPropertyChanged notifiable, IEnumerable<string> propertyNames)
+        public CachedReadOnlyProperty<T> AddDependencies(INotifyPropertyChanged notifiable, IEnumerable<string> propertyNames)
         {
             List<string> namesList = null;
             if (dependencies.ContainsKey(notifiable))
@@ -88,6 +89,7 @@ namespace AX.MVVM
                 if (!namesList.Contains(propName))
                     namesList.Add(propName);
             }
+            return this;
         }
 
         ~CachedRelayProperty()

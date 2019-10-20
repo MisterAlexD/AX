@@ -5,6 +5,7 @@ using System.Text;
 
 namespace AX.MVVM
 {
+    [Obsolete("See no point using it", true)]
     public interface ICachedReadOnlyProperty : INotifyPropertyChanged, INotifyPropertyChanging
     {
         void UpdateValue();
