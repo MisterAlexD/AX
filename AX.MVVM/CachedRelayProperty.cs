@@ -11,8 +11,7 @@ namespace AX.MVVM
         private Func<T> GetFunc;
         private Action<T> SetAction;
 
-        INotifyPropertyChanged notifyObj;
-        public List<string> Dependencies { get; private set; }
+        private Dictionary<INotifyPropertyChanged, List<string>> dependencies = new Dictionary<INotifyPropertyChanged, List<string>>();
 
         private bool isValueSet = false;
 
@@ -34,25 +33,22 @@ namespace AX.MVVM
             Debug.Assert(setAction != null);
             GetFunc = getFunction;
             SetAction = setAction;
-
-            if (notifyObj != null)
+            if (notifyObj != null && dependeceProperties != null)
             {
-                this.notifyObj = notifyObj;
-                notifyObj.PropertyChanged += NotifyObj_PropertyChanged;
-            }
-            Dependencies = new List<string>(5);
-            if (Dependencies != null)
-            {
-                Dependencies.AddRange(dependeceProperties);
+                AddDependencies(notifyObj, dependeceProperties);
             }
 
         }
 
         private void NotifyObj_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.IsAny(Dependencies))
+            var notifyable = sender as INotifyPropertyChanged;
+            if (dependencies.ContainsKey(notifyable))
             {
-                UpdateValue();
+                if (e.IsAny(dependencies[notifyable]))
+                {
+                    DropValue();
+                }
             }
         }
 
@@ -64,18 +60,43 @@ namespace AX.MVVM
 
         public void UpdateValue()
         {
-            value = GetFunc();
-            OnPropertyChanged(nameof(Value));
+            Value = GetFunc();
+            isValueSet = true;
         }
 
-        public void AddDependencies(params string[] dependencies)
+        public void AddDependencies(INotifyPropertyChanged notifiable, params string[] propertyNames)
         {
-            Dependencies.AddRange(dependencies);
+            AddDependencies(notifiable, (IEnumerable<string>)propertyNames);
         }
 
-        public void AddDependencies(IEnumerable<string> dependencies)
+        public void AddDependencies(INotifyPropertyChanged notifiable, IEnumerable<string> propertyNames)
         {
-            Dependencies.AddRange(dependencies);
+            List<string> namesList = null;
+            if (dependencies.ContainsKey(notifiable))
+            {
+                namesList = dependencies[notifiable];
+            }
+            else
+            {
+                namesList = new List<string>(5);
+                dependencies.Add(notifiable, namesList);
+                notifiable.PropertyChanged += NotifyObj_PropertyChanged;
+            }
+
+            foreach (var propName in propertyNames)
+            {
+                if (!namesList.Contains(propName))
+                    namesList.Add(propName);
+            }
+        }
+
+        ~CachedRelayProperty()
+        {
+            foreach (var notifiable in dependencies.Keys)
+            {
+                notifiable.PropertyChanged -= NotifyObj_PropertyChanged;
+            }
+            dependencies.Clear();
         }
     }
 

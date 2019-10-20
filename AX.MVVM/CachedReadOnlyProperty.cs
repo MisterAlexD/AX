@@ -8,7 +8,7 @@ namespace AX.MVVM
 {
     public class CachedReadOnlyProperty<PropertyType> : NotifyBase, ICachedReadOnlyProperty<PropertyType>
     {
-        public List<string> Dependencies { get; private set; }
+        private Dictionary<INotifyPropertyChanged, List<string>> dependencies = new Dictionary<INotifyPropertyChanged, List<string>>();
 
         private bool isValuesSet = false;
 
@@ -28,54 +28,74 @@ namespace AX.MVVM
 
         public CachedReadOnlyProperty(Func<PropertyType> getFunction, INotifyPropertyChanged notifyObj = null, IEnumerable<string> dependenceProperties = null)
         {
-            Dependencies = new List<string>(5);
-            if (dependenceProperties != null) Dependencies.AddRange(dependenceProperties);
-
             this.GetFunc = getFunction;
-
-            if (notifyObj != null)
+            if (notifyObj != null && dependenceProperties != null)
             {
-                notifyObj.PropertyChanged += NotifyObject_PropertyChanged;
+                AddDependencies(notifyObj, dependenceProperties);
             }
         }
+
 
         private void NotifyObject_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.IsAny(Dependencies))
+            var notifyable = sender as INotifyPropertyChanged;
+            if (dependencies.ContainsKey(notifyable))
             {
-                UpdateValue();
+                if (e.IsAny(dependencies[notifyable]))
+                {
+                    DropValue();
+                }
             }
         }
 
-        public void AddDependencies(params string[] propertyNames)
+        public void AddDependencies(INotifyPropertyChanged notifiable, params string[] propertyNames)
         {
-            foreach (var propName in propertyNames)
-            {
-                if (!Dependencies.Contains(propName))
-                    Dependencies.Add(propName);
-            }
+            AddDependencies(notifiable, (IEnumerable<string>)propertyNames);
         }
 
-        public void AddDependencies(IEnumerable<string> propertyNames)
+
+        public void AddDependencies(INotifyPropertyChanged notifiable, IEnumerable<string> propertyNames)
         {
+            List<string> namesList = null;
+            if (dependencies.ContainsKey(notifiable))
+            {
+                namesList = dependencies[notifiable];
+            }
+            else
+            {
+                namesList = new List<string>(5);
+                dependencies.Add(notifiable, namesList);
+                notifiable.PropertyChanged += NotifyObject_PropertyChanged;
+            }
+
             foreach (var propName in propertyNames)
             {
-                if (!Dependencies.Contains(propName))
-                    Dependencies.Add(propName);
+                if (!namesList.Contains(propName))
+                    namesList.Add(propName);
             }
         }
 
         public void DropValue()
-        {   
+        {
             isValuesSet = false;
-            Value = default;
+            OnPropertyChanged(nameof(Value));
         }
 
         public void UpdateValue()
-        {   
+        {
             Value = GetFunc();
             isValuesSet = true;
         }
+
+        ~CachedReadOnlyProperty()
+        {
+            foreach (var notifiable in dependencies.Keys)
+            {
+                notifiable.PropertyChanged -= NotifyObject_PropertyChanged;
+            }
+            dependencies.Clear();
+        }
+
     }
 
     public static class CachedReadOnlyProperty
