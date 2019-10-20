@@ -14,7 +14,8 @@ namespace AX.MVVM
         void AddDependencies(INotifyPropertyChanged notifiable, IEnumerable<string> dependencies);
     }
 
-    public interface ICachedReadOnlyProperty<T> : ICachedReadOnlyProperty
+    [Obsolete("See no point using it", true)]
+    public interface ICachedReadOnlyProperty<T> 
     {
         T Value { get; }
     }
