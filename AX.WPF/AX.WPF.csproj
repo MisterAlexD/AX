@@ -52,6 +52,7 @@
     <Compile Include="Controls\AdornedControl\ImprovedAdornedControl.cs" />
     <Compile Include="Controls\AdornedControl\AdornerPlacement.cs" />
     <Compile Include="Controls\AdornedControl\FrameworkElementAdorner.cs" />
+    <Compile Include="Controls\FilterTreeSelector.cs" />
     <Compile Include="Converters\ConverterResult.cs" />
     <Compile Include="Converters\InvertDoubleConverter.cs" />
     <Compile Include="Converters\MultiplyDoublesConverter.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="CustomRenderOverlayControl.cs" />
     <Compile Include="CustomRenderOverlayElement.cs" />
     <Compile Include="Controls\OutlineBorder.cs" />
+    <Compile Include="IFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

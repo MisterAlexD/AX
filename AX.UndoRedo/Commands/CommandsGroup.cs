@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
+using System.Linq;
 namespace AX.UndoRedo
 {
     public class CommandsGroup : IUndoableCommand
@@ -29,7 +29,7 @@ namespace AX.UndoRedo
 
         public void Undo()
         {
-            Commands.ForEach(c => c.Undo());
+            Commands.Reverse<IUndoableCommand>().ForEach(c => c.Undo());
         }
     }
 }

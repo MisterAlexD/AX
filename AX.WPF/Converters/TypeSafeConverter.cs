@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 
 namespace AX.WPF.Converters
@@ -16,7 +17,12 @@ namespace AX.WPF.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (CanConvert)
-                return Convert((SourceType)value, (ParameterType)parameter, culture);
+            {
+                var result = Convert((SourceType)value, (ParameterType)parameter, culture);
+                return result.ResultType == ConverterResultType.Valid ? result.ValidResult :
+                       result.ResultType == ConverterResultType.UnsetValue ? DependencyProperty.UnsetValue :
+                       null;
+            }
             else
                 return null;
         }
@@ -26,7 +32,12 @@ namespace AX.WPF.Converters
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (CanConvertBack)
-                return ConvertBack((TargetType)value, (ParameterType)parameter, culture);
+            {
+                var result = ConvertBack((TargetType)value, (ParameterType)parameter, culture);
+                return result.ResultType == ConverterResultType.Valid ? result.ValidResult :
+                       result.ResultType == ConverterResultType.UnsetValue ? DependencyProperty.UnsetValue :
+                       null;
+            }
             else
                 return null;
         }

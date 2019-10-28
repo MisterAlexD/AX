@@ -9,8 +9,8 @@ namespace AX.UndoRedo
     {
         bool CanUndo { get; }
         bool CanRedo { get; }
-        bool TransactionInProgress { get; }
-        int TransactionDepth { get; }
+        bool RecordingSessionInProgress { get; }
+        int SessionDepth { get; }
 
         IReadOnlyObservableCollection<CommandRecord> UndoableCommands { get; }
         IReadOnlyObservableCollection<CommandRecord> RedoableCommands { get; }
@@ -21,8 +21,8 @@ namespace AX.UndoRedo
         void Do(IUndoableCommand command, string commandName = "");
         void Record(IRecordableCommand command, string commandName = "");
 
-        void StartTransaction(string transactionName = "");
-        void CommitTransaction();
-        void RefuseTransaction();
+        void StartCommandsRecordingSession(string transactionName = "");
+        void AcceptSession();
+        void RollbackSession();
     }
 }

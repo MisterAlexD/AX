@@ -19,7 +19,7 @@ namespace AX.UndoRedo
             SubscribeProperty(nameof(CanUndo), nameof(UndoableCommands));
             SubscribeProperty(nameof(CanRedo), nameof(RedoableCommands));
 
-            SubscribeProperty(nameof(TransactionInProgress), nameof(TransactionDepth));
+            SubscribeProperty(nameof(RecordingSessionInProgress), nameof(SessionDepth));
         }
 
         public UndoRedoManager(int initialCapacity = 100)
@@ -28,11 +28,11 @@ namespace AX.UndoRedo
             redoCommands = new ObservableStack<CommandRecord>(new List<CommandRecord>(initialCapacity));
         }
 
-        public bool CanUndo => !TransactionInProgress && undoCommands.Count > 0;
-        public bool CanRedo => !TransactionInProgress && redoCommands.Count > 0;
+        public bool CanUndo => !RecordingSessionInProgress && undoCommands.Count > 0;
+        public bool CanRedo => !RecordingSessionInProgress && redoCommands.Count > 0;
 
-        public bool TransactionInProgress => transactionRecords.Count > 0;
-        public int TransactionDepth => transactionRecords.Count;
+        public bool RecordingSessionInProgress => transactionRecords.Count > 0;
+        public int SessionDepth => transactionRecords.Count;
 
         public IReadOnlyObservableCollection<CommandRecord> UndoableCommands => undoCommands;
         public IReadOnlyObservableCollection<CommandRecord> RedoableCommands => redoCommands;
@@ -41,8 +41,9 @@ namespace AX.UndoRedo
         {
             if (command != null)
             {
-                if (TransactionInProgress)
+                if (RecordingSessionInProgress)
                 {
+                    command.Do();
                     transactionRecords.Peek().CommandsGroup.Commands.Add(command);
                 }
                 else
@@ -60,8 +61,9 @@ namespace AX.UndoRedo
         {
             if (command != null)
             {
-                if (TransactionInProgress)
+                if (RecordingSessionInProgress)
                 {
+                    command.OnRecord();
                     transactionRecords.Peek().CommandsGroup.Commands.Add(command);
                 }
                 else
@@ -77,8 +79,8 @@ namespace AX.UndoRedo
 
         public void Undo()
         {
-            Debug.Assert(!TransactionInProgress);
-            if (TransactionInProgress)
+            Debug.Assert(!RecordingSessionInProgress);
+            if (RecordingSessionInProgress)
             {
                 throw new InvalidOperationException("Can't undo while transaction in progress");
             }
@@ -96,8 +98,8 @@ namespace AX.UndoRedo
 
         public void Redo()
         {
-            Debug.Assert(!TransactionInProgress);
-            if (TransactionInProgress)
+            Debug.Assert(!RecordingSessionInProgress);
+            if (RecordingSessionInProgress)
             {
                 throw new InvalidOperationException("Can't redo while transaction in progress.");
             }
@@ -112,33 +114,43 @@ namespace AX.UndoRedo
             }
         }
 
-        public void StartTransaction(string transactionName = "")
+        public void StartCommandsRecordingSession(string transactionName = "")
         {   
             transactionRecords.Push(new TransactionRecord { CommandsGroup = new CommandsGroup(), TransactionName = transactionName});
-            OnPropertyChanged(nameof(TransactionDepth));
+            OnPropertyChanged(nameof(SessionDepth));
         }
 
-        public void CommitTransaction()
+        public void AcceptSession()
         {
-            Debug.Assert(TransactionInProgress);
-            if (TransactionInProgress)
+            Debug.Assert(RecordingSessionInProgress);
+            if (RecordingSessionInProgress)
             {
                 var transactionRecord = transactionRecords.Pop();
-                Do(transactionRecord.CommandsGroup);
-                OnPropertyChanged(nameof(TransactionDepth));
+                if (transactionRecords.Count > 0)
+                {
+                    transactionRecords.Peek().CommandsGroup.Commands.Add(transactionRecord.CommandsGroup);
+                }
+                else
+                {
+                    redoCommands.Clear();
+                    undoCommands.Push(new CommandRecord { Command = transactionRecord.CommandsGroup, CommandName = transactionRecord.TransactionName});
+                    OnPropertyChanged(nameof(UndoableCommands));
+                    OnPropertyChanged(nameof(RedoableCommands));
+                }
+                OnPropertyChanged(nameof(SessionDepth));
             }
         }
 
-        public void RefuseTransaction()
+        public void RollbackSession()
         {
-            Debug.Assert(TransactionInProgress);
-            if (TransactionInProgress)
+            Debug.Assert(RecordingSessionInProgress);
+            if (RecordingSessionInProgress)
             {
                 var transactionRecord = transactionRecords.Pop();
-                //Возвращаем значения для записываемых комманд, так как их действия уже были выполнены
-                transactionRecord.CommandsGroup.Commands.OfType<IRecordableCommand>().ForEach(command => command.Undo());
+
+                transactionRecord.CommandsGroup.Undo();
                
-                OnPropertyChanged(nameof(TransactionDepth));
+                OnPropertyChanged(nameof(SessionDepth));
             }
         }
 
