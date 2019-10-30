@@ -31,7 +31,7 @@ namespace AX.MVVM
             this.GetFunc = getFunction;
             if (notifyObj != null && dependenceProperties != null)
             {
-                AddDependencies(notifyObj, dependenceProperties);
+                SubscribeTo(notifyObj, dependenceProperties);
             }
         }
 
@@ -47,12 +47,12 @@ namespace AX.MVVM
             }
         }
 
-        public CachedReadOnlyProperty<PropertyType> AddDependencies(INotifyPropertyChanged notifiable, params string[] propertyNames)
+        public CachedReadOnlyProperty<PropertyType> SubscribeTo(INotifyPropertyChanged notifiable, params string[] propertyNames)
         {
-            return AddDependencies(notifiable, (IEnumerable<string>)propertyNames);
+            return SubscribeTo(notifiable, (IEnumerable<string>)propertyNames);
         }
 
-        public CachedReadOnlyProperty<PropertyType> AddDependencies(INotifyPropertyChanged notifiable, IEnumerable<string> propertyNames)
+        public CachedReadOnlyProperty<PropertyType> SubscribeTo(INotifyPropertyChanged notifiable, IEnumerable<string> propertyNames)
         {
             List<string> namesList = null;
             if (dependencies.ContainsKey(notifiable))

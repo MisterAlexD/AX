@@ -35,7 +35,7 @@ namespace AX.MVVM
             SetAction = setAction;
             if (notifyObj != null && dependeceProperties != null)
             {
-                AddDependencies(notifyObj, dependeceProperties);
+                SubscribeTo(notifyObj, dependeceProperties);
             }
 
         }
@@ -64,12 +64,12 @@ namespace AX.MVVM
             isValueSet = true;
         }
 
-        public CachedRelayProperty<T> AddDependencies(INotifyPropertyChanged notifiable, params string[] propertyNames)
+        public CachedRelayProperty<T> SubscribeTo(INotifyPropertyChanged notifiable, params string[] propertyNames)
         {
-            return AddDependencies(notifiable, (IEnumerable<string>)propertyNames);
+            return SubscribeTo(notifiable, (IEnumerable<string>)propertyNames);
         }
 
-        public CachedRelayProperty<T> AddDependencies(INotifyPropertyChanged notifiable, IEnumerable<string> propertyNames)
+        public CachedRelayProperty<T> SubscribeTo(INotifyPropertyChanged notifiable, IEnumerable<string> propertyNames)
         {
             List<string> namesList = null;
             if (dependencies.ContainsKey(notifiable))

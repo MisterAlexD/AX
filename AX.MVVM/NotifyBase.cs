@@ -205,7 +205,8 @@ namespace AX.MVVM
                 return true;
             }
         }
-
+        
+        [Obsolete("This method will soon be renamed")]
         protected void SubscribeTo<PropType>(CachedRelayProperty<PropType> relayProperty, string propertyName)
         {
             void relayProperty_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -223,6 +224,7 @@ namespace AX.MVVM
             relayProperty.PropertyChanged += relayProperty_PropertyChanged;
         }
 
+        [Obsolete("This method will soon be renamed")]
         protected void SubscribeTo<PropType>(CachedReadOnlyProperty<PropType> relayProperty, string propertyName)
         {
             void relayProperty_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -248,7 +250,7 @@ namespace AX.MVVM
         }
 
         protected CachedRelayProperty<T> CreateCachedRelayProperty<T>(Func<T> getFunc, Action<T> setAction, string propertyName,
-                                                                      INotifyPropertyChanged notifyObj, params string[] dependecies)
+                                                                      INotifyPropertyChanged notifyObj = null, params string[] dependecies)
         {
             var result = CachedRelayProperty.Create(getFunc, setAction, notifyObj, dependecies);
             SubscribeTo(result, propertyName);
