@@ -10,7 +10,7 @@ using System.Text;
 namespace AX.MVVM
 {  
     
-    public class VMReadOnlyCollection<ViewModelType, ModelType> : IReadOnlyList<ViewModelType>, INotifyCollectionChanged
+    public class VMReadOnlyCollection<ViewModelType, ModelType> : IReadOnlyList<ViewModelType>, INotifyCollectionChanged, IReadOnlyObservableCollection<ViewModelType>
         where ViewModelType : IViewModel<ModelType>
     {
         private IEnumerable<ModelType> modelsCollection;
@@ -41,6 +41,19 @@ namespace AX.MVVM
             }
 
             this.internalList.CollectionChanged += InternalList_CollectionChanged;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged
+        {
+            add
+            {
+                ((IReadOnlyObservableCollection<ViewModelType>)internalList).PropertyChanged += value;
+            }
+
+            remove
+            {
+                ((IReadOnlyObservableCollection<ViewModelType>)internalList).PropertyChanged -= value;
+            }
         }
 
         private void InternalList_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
